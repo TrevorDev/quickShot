@@ -1,0 +1,2 @@
+# quickShot
+unoriginal idea
