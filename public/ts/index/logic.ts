@@ -24,5 +24,6 @@ stage.scene.add( light );
 stage.startRender(()=>{
 	stage.camera.position.y++;
 	light.position.x++;
+	sphere.rotateX(0.03)
 	//floor.rotateX(0.01)
 })

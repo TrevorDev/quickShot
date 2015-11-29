@@ -38,7 +38,7 @@ export default {
       vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
       gl_Position = projectionMatrix * mvPosition;
   		vPositionW = vec3(modelViewMatrix * vec4(position, 1.0));
-      vNormalW = normalize(vec3(vec4(normal, 0.0)));
+      vNormalW = normalize(vec3(modelViewMatrix * vec4(normal, 0.0)));
     }
     `,
   	fragmentShader: `
