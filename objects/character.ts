@@ -42,11 +42,13 @@ class Character {
       this.spd.x -= Math.sin(this.body.rotation.y) * this.moveAcc
       this.spd.z -= Math.cos(this.body.rotation.y) * this.moveAcc
     }
-    if(this.controller.isDown("left")){
-      this.body.rotation.y+=0.05;
-    }
     if(this.controller.isDown("right")){
-      this.body.rotation.y-=0.05;
+      this.spd.z += Math.sin(this.body.rotation.y) * this.moveAcc
+      this.spd.x -= Math.cos(this.body.rotation.y) * this.moveAcc
+    }
+    if(this.controller.isDown("left")){
+      this.spd.z -= Math.sin(this.body.rotation.y) * this.moveAcc
+      this.spd.x += Math.cos(this.body.rotation.y) * this.moveAcc
     }
 
     this.body.position.add(this.spd)
