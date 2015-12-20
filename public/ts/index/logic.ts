@@ -10,6 +10,7 @@ var stage = stageFactory.create(container);
 
 //meshes
 var sphere = new THREE.Mesh(new THREE.SphereGeometry(70, 32, 16), materials.toon);
+sphere.position.z +=600;
 stage.scene.add(sphere);
 
 var floor = new THREE.Mesh(new THREE.BoxGeometry(1000, 10, 3000), materials.toon);
@@ -29,11 +30,13 @@ var controller = new Controller({
 	down: "s",
 	left: "a",
 	right: "d",
+	jump: " ",
 	rotX: "mouseX",
 	rotY: "mouseY",
 	click: "mouseLeft"
 })
-var player = new Player(controller);
+var player = new Player(controller, [floor, sphere]);
+player.body.position.y = 200;
 stage.scene.add(player.body)
 
 stage.startRender(()=>{

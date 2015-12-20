@@ -6,7 +6,7 @@ class Character {
   body:THREE.Mesh
   spd:THREE.Vector3
   moveAcc = 0.1;
-  constructor(public controller:Controller){
+  constructor(public controller:Controller, public collisionObjects:Array<THREE.Object3D>){
     this.body = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), materials.toon);
     this.spd = new THREE.Vector3(0,0,0)
   }
@@ -34,6 +34,8 @@ class Character {
     this.body.rotation.x = this.controller.getValue("rotY")/1000
     this.body.rotation.y = -this.controller.getValue("rotX")/1000
 
+    this.spd.y -= 0.2
+
     if(this.controller.isDown("up")){
       this.spd.x += Math.sin(this.body.rotation.y) * this.moveAcc
       this.spd.z += Math.cos(this.body.rotation.y) * this.moveAcc
@@ -49,6 +51,15 @@ class Character {
     if(this.controller.isDown("left")){
       this.spd.z -= Math.sin(this.body.rotation.y) * this.moveAcc
       this.spd.x += Math.cos(this.body.rotation.y) * this.moveAcc
+    }
+    if(this.controller.isDown("jump")){
+      this.spd.y = 5
+    }
+    var movement = new THREE.Raycaster(this.body.position, this.spd.clone().normalize(), 0, this.spd.length())
+
+    var intersects = movement.intersectObjects(this.collisionObjects, false)
+    if(intersects.length > 0){
+      this.spd.y = 0;
     }
 
     this.body.position.add(this.spd)
