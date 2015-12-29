@@ -21,13 +21,11 @@ class Character {
 
   getCameraLook(){
         var height = 50
-        var ret = new THREE.Vector3()
-        ret.copy(this.body.position)
-        //console.log()
+        var ret = this.getCameraPos();
         ret.x += Math.sin(this.body.rotation.y) * Math.cos(this.body.rotation.x)
         ret.z += Math.cos(this.body.rotation.y) * Math.cos(this.body.rotation.x)
-        ret.y = this.body.position.y+height - Math.sin(this.body.rotation.x)
-        return ret
+        ret.y -= Math.sin(this.body.rotation.x)
+        return ret.multiplyScalar(1);
   }
 
   move(){
@@ -56,9 +54,11 @@ class Character {
     if(this.controller.isDown("jump")){
       this.spd.y = 5
     }
+
+
     do{
       var movement = new THREE.Raycaster(this.body.position, this.spd.clone().normalize(), 0, this.spd.length())
-      var intersects = movement.intersectObjects(this.collisionObjects, false)
+      var intersects = movement.intersectObjects(this.collisionObjects, true)
       if(intersects.length > 0){
         var closest = intersects.reduce((prev, cur)=>{
           if(prev == null){
