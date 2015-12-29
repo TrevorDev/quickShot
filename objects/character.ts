@@ -31,8 +31,9 @@ class Character {
   }
 
   move(){
-    this.body.rotation.x = this.controller.getValue("rotY")/1000
-    this.body.rotation.y = -this.controller.getValue("rotX")/1000
+    var mouoseSpd = 1/500
+    this.body.rotation.x = this.controller.getValue("rotY")* mouoseSpd
+    this.body.rotation.y = -this.controller.getValue("rotX")* mouoseSpd
 
     this.spd.y -= 0.2
 
@@ -55,12 +56,21 @@ class Character {
     if(this.controller.isDown("jump")){
       this.spd.y = 5
     }
-    var movement = new THREE.Raycaster(this.body.position, this.spd.clone().normalize(), 0, this.spd.length())
+    do{
+      var movement = new THREE.Raycaster(this.body.position, this.spd.clone().normalize(), 0, this.spd.length())
+      var intersects = movement.intersectObjects(this.collisionObjects, false)
+      if(intersects.length > 0){
+        var closest = intersects.reduce((prev, cur)=>{
+          if(prev == null){
+            return cur;
+          }
+          return cur.distance < prev.distance ? cur : prev
+        })
+        this.spd.copy(this.spd.projectOnPlane(closest.face.normal))
+      }
+    }while(intersects.length > 0)
 
-    var intersects = movement.intersectObjects(this.collisionObjects, false)
-    if(intersects.length > 0){
-      this.spd.y = 0;
-    }
+
 
     this.body.position.add(this.spd)
   }

@@ -35,6 +35,7 @@ export default {
   	varying vec3 vNormalW;
   	varying vec2 vUV;
     void main() {
+      //regular vertex shader
       vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
       gl_Position = projectionMatrix * mvPosition;
   		vPositionW = vec3(modelViewMatrix * vec4(position, 1.0));
@@ -61,10 +62,13 @@ export default {
       ToonBrightnessLevels[3] = 0.35;
       ToonBrightnessLevels[4] = 0.2;
 
+      //vector from light to pixel
       vec3 lightVectorW = normalize(pointLightPosition[0] - vPositionW);
+      //angle between normal and pixel
       float ndl = max(0., dot(vNormalW, lightVectorW));
       vec3 color = ambientLightColor;
 
+      //toon levels
       if (ndl > ToonThresholds[0])
       {
           color *= ToonBrightnessLevels[0];
@@ -85,7 +89,8 @@ export default {
       {
           color *= ToonBrightnessLevels[4];
       }
-
+      //add normal shading ontop of toon shader
+      color *= ndl;
       gl_FragColor = vec4 (color, 1.0);
     }
     `
