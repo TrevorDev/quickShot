@@ -27,14 +27,27 @@ class Character {
         ret.y -= Math.sin(this.body.rotation.x)
         return ret.multiplyScalar(1);
   }
-
+  xMouseVal = 0;
+  yMouseVal = 0;
   move(){
     var mouoseSpd = 1/500
-    this.body.rotation.x = this.controller.getValue("rotY")* mouoseSpd
-    this.body.rotation.y = -this.controller.getValue("rotX")* mouoseSpd
+    //move mouse and limit verticle rotation
+    var xChange =  this.xMouseVal - this.controller.getValue("rotX")* mouoseSpd;
+    this.xMouseVal = this.controller.getValue("rotX")* mouoseSpd
+    var yChange = this.yMouseVal - this.controller.getValue("rotY")* mouoseSpd
+    this.yMouseVal = this.controller.getValue("rotY")* mouoseSpd
+    this.body.rotation.x -= yChange
+    if(this.body.rotation.x  > Math.PI/2 - 0.1){
+      this.body.rotation.x = Math.PI/2 - 0.1
+    }else if(this.body.rotation.x  < -Math.PI/2 + 0.1){
+      this.body.rotation.x = -Math.PI/2 + 0.1
+    }
+    this.body.rotation.y += xChange
 
+    //gravity
     this.spd.y -= 0.2
 
+    //key input
     if(this.controller.isDown("up")){
       this.spd.x += Math.sin(this.body.rotation.y) * this.moveAcc
       this.spd.z += Math.cos(this.body.rotation.y) * this.moveAcc
@@ -55,7 +68,7 @@ class Character {
       this.spd.y = 5
     }
 
-
+    //colliison with objects
     do{
       var movement = new THREE.Raycaster(this.body.position, this.spd.clone().normalize(), 0, this.spd.length())
       var intersects = movement.intersectObjects(this.collisionObjects, true)
@@ -67,9 +80,10 @@ class Character {
           return cur.distance < prev.distance ? cur : prev
         })
         this.spd.copy(this.spd.projectOnPlane(closest.face.normal))
+        // friction
+        this.spd = this.spd.multiplyScalar(0.3)
       }
     }while(intersects.length > 0)
-
 
 
     this.body.position.add(this.spd)

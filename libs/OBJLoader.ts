@@ -89,6 +89,7 @@ class OBJLoader {
 
 		}
 
+    //TODO fix to work with N number of verticies
 		function addFace( a, b, c, d,  ua?, ub?, uc?, ud?, na?, nb?, nc?, nd? ) {
 
 			var ia = parseVertexIndex( a );
