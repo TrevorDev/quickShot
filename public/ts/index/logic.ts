@@ -48,7 +48,7 @@ var main = async ()=>{
 	stage.startRender(()=>{
 		//console.log(controller.getValue("rotX"))
 
-		light.position.copy(player.body.position);
+		light.position.copy(player.getCameraPos());
 		light.position.y+=200;
 		player.move();
 		stage.camera.position.copy(player.getCameraPos())

@@ -11,7 +11,7 @@ class Character {
     this.spd = new THREE.Vector3(0,0,0)
   }
 
-  getCameraPos(){
+  getCameraLook(){
         var height = 50
         var ret = new THREE.Vector3()
         ret.copy(this.body.position)
@@ -19,18 +19,19 @@ class Character {
         return ret
   }
 
-  getCameraLook(){
+  getCameraPos(){
         var height = 50
-        var ret = this.getCameraPos();
+        var ret = this.getCameraLook();
         ret.x += Math.sin(this.body.rotation.y) * Math.cos(this.body.rotation.x)
         ret.z += Math.cos(this.body.rotation.y) * Math.cos(this.body.rotation.x)
-        ret.y -= Math.sin(this.body.rotation.x)
-        return ret.multiplyScalar(1);
+        ret.y += Math.sin(this.body.rotation.x)
+        var diff = ret.clone().sub(this.getCameraLook())
+        return diff.multiplyScalar(1000).add(this.getCameraLook())
   }
   xMouseVal = 0;
   yMouseVal = 0;
   move(){
-    var mouoseSpd = 1/500
+    var mouoseSpd = 1/700
     //move mouse and limit verticle rotation
     var xChange =  this.xMouseVal - this.controller.getValue("rotX")* mouoseSpd;
     this.xMouseVal = this.controller.getValue("rotX")* mouoseSpd
@@ -48,27 +49,29 @@ class Character {
     this.spd.y -= 0.2
 
     //key input
+    var walkDir = new THREE.Vector3()
     if(this.controller.isDown("up")){
-      this.spd.x += Math.sin(this.body.rotation.y) * this.moveAcc
-      this.spd.z += Math.cos(this.body.rotation.y) * this.moveAcc
+      walkDir.x -= Math.sin(this.body.rotation.y) * this.moveAcc
+      walkDir.z -= Math.cos(this.body.rotation.y) * this.moveAcc
     }
     if(this.controller.isDown("down")){
-      this.spd.x -= Math.sin(this.body.rotation.y) * this.moveAcc
-      this.spd.z -= Math.cos(this.body.rotation.y) * this.moveAcc
+      walkDir.x += Math.sin(this.body.rotation.y) * this.moveAcc
+      walkDir.z += Math.cos(this.body.rotation.y) * this.moveAcc
     }
     if(this.controller.isDown("right")){
-      this.spd.z += Math.sin(this.body.rotation.y) * this.moveAcc
-      this.spd.x -= Math.cos(this.body.rotation.y) * this.moveAcc
+      walkDir.z -= Math.sin(this.body.rotation.y) * this.moveAcc
+      walkDir.x += Math.cos(this.body.rotation.y) * this.moveAcc
     }
     if(this.controller.isDown("left")){
-      this.spd.z -= Math.sin(this.body.rotation.y) * this.moveAcc
-      this.spd.x += Math.cos(this.body.rotation.y) * this.moveAcc
+      walkDir.z += Math.sin(this.body.rotation.y) * this.moveAcc
+      walkDir.x -= Math.cos(this.body.rotation.y) * this.moveAcc
     }
     if(this.controller.isDown("jump")){
       this.spd.y = 5
     }
 
     //colliison with objects
+    this.spd = this.spd.add(walkDir)
     do{
       var movement = new THREE.Raycaster(this.body.position, this.spd.clone().normalize(), 0, this.spd.length())
       var intersects = movement.intersectObjects(this.collisionObjects, true)
@@ -81,7 +84,9 @@ class Character {
         })
         this.spd.copy(this.spd.projectOnPlane(closest.face.normal))
         // friction
+        //var purpWalkDir = new THREE.Vector3(walkDir.z, 0, -walkDir.x)
         this.spd = this.spd.multiplyScalar(0.3)
+        //this.spd.projectOnVector(walkDir)
       }
     }while(intersects.length > 0)
 
