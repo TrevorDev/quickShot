@@ -4,7 +4,7 @@ import Stage from "../objects/stage"
 export default {
   create: function(container){
     var ret = new Stage();
-    ret.camera = new THREE.PerspectiveCamera( 27, window.innerWidth / window.innerHeight, 5, 3500 );
+    ret.camera = new THREE.PerspectiveCamera( 27, window.innerWidth / window.innerHeight, 5, 35000 );
   	ret.camera.position.z = 2750;
 
     ret.scene = new THREE.Scene();
