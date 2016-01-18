@@ -72,7 +72,7 @@ class Character {
     }
 
     //colliison with objects
-    this.spd = this.spd.add(walkDir)
+    this.spd.add(walkDir)
     do{
       var movement = new THREE.Raycaster(this.body.position, this.spd.clone().normalize(), 0, this.spd.length())
       var intersects = movement.intersectObjects(this.collisionObjects, true)
@@ -83,17 +83,23 @@ class Character {
           }
           return cur.distance < prev.distance ? cur : prev
         })
-        this.spd.copy(this.spd.projectOnPlane(closest.face.normal))
+        this.spd.projectOnPlane(closest.face.normal)
+
         // friction
-        //var purpWalkDir = new THREE.Vector3(walkDir.z, 0, -walkDir.x)
-        this.spd = this.spd.multiplyScalar(0.3)
-        //this.spd.projectOnVector(walkDir)
+        let walkPlane = walkDir.clone().projectOnPlane(closest.face.normal)
+        let noFric = this.spd.clone().projectOnVector(walkPlane)
+        let applyFric = this.spd.clone().sub(noFric)
+        this.spd.copy(noFric.clone().add(applyFric.multiplyScalar(0.9)))
       }
     }while(intersects.length > 0)
 
 
     this.body.position.add(this.spd)
     this.body.rotation.y = this.view.y
+    if(this.body.position.y < -1000){
+      this.body.position.copy(new THREE.Vector3(0,0,0))
+      this.spd.copy(new THREE.Vector3(0,0,0))
+    }
   }
 }
 
