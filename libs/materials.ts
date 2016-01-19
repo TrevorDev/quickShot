@@ -1,6 +1,12 @@
 import THREE = require("three")
-
+var depthShader = THREE.ShaderLib[ "depthRGBA" ];
+var depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
 export default {
+  depth:new THREE.ShaderMaterial( {
+    fragmentShader: depthShader.fragmentShader,
+    vertexShader: depthShader.vertexShader,
+    uniforms: depthUniforms, blending: THREE.NoBlending
+  }),
   toon: new THREE.ShaderMaterial({
     lights: true,
   	uniforms: {
@@ -50,13 +56,13 @@ export default {
     void main() {
 
       float ToonThresholds[4];
-      ToonThresholds[0] = 0.95;
-      ToonThresholds[1] = 0.5;
+      ToonThresholds[0] = 0.99;
+      ToonThresholds[1] = 0.6;
       ToonThresholds[2] = 0.2;
       ToonThresholds[3] = 0.03;
 
       float ToonBrightnessLevels[5];
-      ToonBrightnessLevels[0] = 1.0;
+      ToonBrightnessLevels[0] = 0.94;
       ToonBrightnessLevels[1] = 0.8;
       ToonBrightnessLevels[2] = 0.6;
       ToonBrightnessLevels[3] = 0.35;

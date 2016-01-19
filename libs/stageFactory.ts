@@ -17,12 +17,28 @@ export default {
   	ret.renderer.setPixelRatio( window.devicePixelRatio );
   	ret.renderer.setSize( window.innerWidth, window.innerHeight );
 
+    //depth pass setup
+    var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter };
+    ret.depthRenderTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, pars );
+
+    // effect composer
     ret.composer = new EffectComposer(ret.renderer);
     ret.composer.addPass(new EffectComposer.RenderPass(ret.scene, ret.camera))
 
-    var effect = new EffectComposer.ShaderPass( passShaders.default );
-    effect.renderToScreen = true;
-    ret.composer.addPass(effect)
+    var ssaoPass = new EffectComposer.ShaderPass( passShaders.ssao );
+    //ssaoPass.renderToScreen = true;
+    ssaoPass.uniforms[ "tDepth" ].value = ret.depthRenderTarget;
+		ssaoPass.uniforms[ 'size' ].value.set( window.innerWidth, window.innerHeight );
+		ssaoPass.uniforms[ 'cameraNear' ].value = ret.camera.near;
+		ssaoPass.uniforms[ 'cameraFar' ].value = ret.camera.far;
+		ssaoPass.uniforms[ 'onlyAO' ].value = 0;
+		ssaoPass.uniforms[ 'aoClamp' ].value = 0.9;
+		ssaoPass.uniforms[ 'lumInfluence' ].value = 0.5;
+    ret.composer.addPass(ssaoPass)
+
+    var rbEffect = new EffectComposer.ShaderPass( passShaders.rbSeperation );
+    rbEffect.renderToScreen = true;
+    ret.composer.addPass(rbEffect)
 
     container.appendChild( ret.renderer.domElement );
     window.addEventListener( 'resize', onWindowResize, false );
