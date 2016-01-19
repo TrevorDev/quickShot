@@ -26,6 +26,7 @@
         "libs/config.ts",
         "libs/materials.ts",
         "libs/OBJLoader.ts",
+        "libs/passShaders.ts",
         "libs/stageFactory.ts",
         "libs/worldLoader.ts",
         "objects/character.ts",
@@ -40,6 +41,10 @@
         "typings/mime/mime.d.ts",
         "typings/node/node.d.ts",
         "typings/serve-static/serve-static.d.ts",
+        "typings/threejs/three-copyshader.d.ts",
+        "typings/threejs/three-effectcomposer.d.ts",
+        "typings/threejs/three-renderpass.d.ts",
+        "typings/threejs/three-shaderpass.d.ts",
         "typings/threejs/three.d.ts",
         "typings/tsd.d.ts"
     ],

@@ -7,3 +7,7 @@
 /// <reference path="threejs/three.d.ts" />
 /// <reference path="browserify/browserify.d.ts" />
 /// <reference path="jade/jade.d.ts" />
+/// <reference path="threejs/three-copyshader.d.ts" />
+/// <reference path="threejs/three-effectcomposer.d.ts" />
+/// <reference path="threejs/three-shaderpass.d.ts" />
+/// <reference path="threejs/three-renderpass.d.ts" />

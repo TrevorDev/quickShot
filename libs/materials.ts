@@ -90,7 +90,7 @@ export default {
           color *= ToonBrightnessLevels[4];
       }
       //add normal shading ontop of toon shader
-      color *= ndl;
+      color *= ndl * ndl;
       gl_FragColor = vec4 (color, 1.0);
     }
     `
